@@ -37,19 +37,9 @@ pub fn encode(value: i64) -> String {
 }
 
 pub fn decode(mut code: &str) -> Option<i64> {
-  let mut value: i64;
+  let mut value: i64 = 0;
 
-  match SYLLABLES
-    .iter()
-    .position(|&syllable| code.starts_with(syllable))
-  {
-    Some(index) => {
-      code = &code[SYLLABLES[index].len()..];
-      value = index as i64;
-    }
-    None => return None,
-  };
-  if code.len() > 0 {
+  while code.len() > 0 {
     match SYLLABLES
       .iter()
       .position(|&syllable| code.starts_with(syllable))
@@ -57,11 +47,11 @@ pub fn decode(mut code: &str) -> Option<i64> {
       Some(index) => {
         value *= SYLLABLES.len() as i64;
         value += index as i64;
+        code = &code[SYLLABLES[index].len()..];
       }
       None => return None,
     };
   }
-
   Some(value)
 }
 
@@ -142,6 +132,20 @@ mod tests {
 
     assert_eq!(
       decode(&[SYLLABLES[tens], SYLLABLES[units]].concat()).unwrap(),
+      value
+    );
+  }
+
+  #[test]
+  fn decode_many_hundreds() {
+    let hundreds = rand::thread_rng().gen_range(1, SYLLABLES.len());
+    let tens = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let value =
+      (hundreds * SYLLABLES.len() * SYLLABLES.len() + tens * SYLLABLES.len() + units) as i64;
+
+    assert_eq!(
+      decode(&[SYLLABLES[hundreds], SYLLABLES[tens], SYLLABLES[units]].concat()).unwrap(),
       value
     );
   }
