@@ -36,6 +36,10 @@ pub fn encode(value: i64) -> String {
   buffer
 }
 
+pub fn decode(code: &str) -> Option<i64> {
+  Some(SYLLABLES.iter().position(|&syllable| syllable == code).unwrap() as i64)
+}
+
 #[cfg(test)]
 mod tests {
   use super::*;
@@ -90,5 +94,13 @@ mod tests {
       encode(value),
       [NEGATIVE_SYLLABLE, SYLLABLES[units]].concat()
     );
+  }
+
+  #[test]
+  fn decode_single_syllable() {
+    let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let value = units as i64;
+
+    assert_eq!(decode(SYLLABLES[units]).unwrap(), value);
   }
 }
