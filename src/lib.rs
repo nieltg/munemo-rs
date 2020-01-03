@@ -15,8 +15,8 @@ pub fn encode(value: i64) -> String {
   let mut buffer = String::new();
 
   if index >= SYLLABLES.len() {
-    buffer.push_str(SYLLABLES[1]);
-    index -= SYLLABLES.len();
+    buffer.push_str(SYLLABLES[index / SYLLABLES.len()]);
+    index %= SYLLABLES.len();
   }
   buffer.push_str(SYLLABLES[index]);
   buffer
@@ -38,6 +38,15 @@ mod tests {
   #[test]
   fn encode_one_tens() {
     let tens = 1;
+    let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let value = (tens * SYLLABLES.len() + units) as i64;
+
+    assert_eq!(encode(value), [SYLLABLES[tens], SYLLABLES[units]].concat());
+  }
+
+  #[test]
+  fn encode_many_tens() {
+    let tens = rand::thread_rng().gen_range(2, SYLLABLES.len());
     let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
     let value = (tens * SYLLABLES.len() + units) as i64;
 
