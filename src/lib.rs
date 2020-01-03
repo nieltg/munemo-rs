@@ -10,15 +10,21 @@ const SYLLABLES: [&str; 100] = [
   "ye", "yo", "za", "zi", "zu", "ze", "zo",
 ];
 
+fn encode_unit(index: usize, buffer: &mut String) {
+  let tens = index / SYLLABLES.len();
+  if tens > 0 {
+    encode_unit(tens, buffer);
+  }
+
+  let units = index % SYLLABLES.len();
+  buffer.push_str(SYLLABLES[units]);
+}
+
 pub fn encode(value: i64) -> String {
-  let mut index: usize = value.try_into().unwrap();
+  let index: usize = value.try_into().unwrap();
   let mut buffer = String::new();
 
-  if index >= SYLLABLES.len() {
-    buffer.push_str(SYLLABLES[index / SYLLABLES.len()]);
-    index %= SYLLABLES.len();
-  }
-  buffer.push_str(SYLLABLES[index]);
+  encode_unit(index, &mut buffer);
   buffer
 }
 
@@ -51,5 +57,19 @@ mod tests {
     let value = (tens * SYLLABLES.len() + units) as i64;
 
     assert_eq!(encode(value), [SYLLABLES[tens], SYLLABLES[units]].concat());
+  }
+
+  #[test]
+  fn encode_many_hundreds() {
+    let hundreds = rand::thread_rng().gen_range(1, SYLLABLES.len());
+    let tens = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let value =
+      (hundreds * SYLLABLES.len() * SYLLABLES.len() + tens * SYLLABLES.len() + units) as i64;
+
+    assert_eq!(
+      encode(value),
+      [SYLLABLES[hundreds], SYLLABLES[tens], SYLLABLES[units]].concat()
+    );
   }
 }
