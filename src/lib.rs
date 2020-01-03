@@ -37,7 +37,13 @@ pub fn encode(value: i64) -> String {
 }
 
 pub fn decode(code: &str) -> Option<i64> {
-  Some(SYLLABLES.iter().position(|&syllable| syllable == code).unwrap() as i64)
+  let value: i64;
+
+  match SYLLABLES.iter().position(|&syllable| syllable == code) {
+    Some(index) => value = index as i64,
+    None => return None,
+  };
+  Some(value)
 }
 
 #[cfg(test)]
@@ -102,5 +108,10 @@ mod tests {
     let value = units as i64;
 
     assert_eq!(decode(SYLLABLES[units]).unwrap(), value);
+  }
+
+  #[test]
+  fn decode_unknown_syllable() {
+    assert_eq!(decode("aa"), None);
   }
 }
