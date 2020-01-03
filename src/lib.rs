@@ -9,6 +9,7 @@ const SYLLABLES: [&str; 100] = [
   "te", "to", "tsa", "tsi", "tsu", "tse", "tso", "wa", "wi", "wu", "we", "wo", "ya", "yi", "yu",
   "ye", "yo", "za", "zi", "zu", "ze", "zo",
 ];
+const NEGATIVE_SYLLABLE: &str = "xa";
 
 fn encode_unit(index: usize, buffer: &mut String) {
   let tens = index / SYLLABLES.len();
@@ -21,8 +22,15 @@ fn encode_unit(index: usize, buffer: &mut String) {
 }
 
 pub fn encode(value: i64) -> String {
-  let index: usize = value.try_into().unwrap();
   let mut buffer = String::new();
+  let index: usize = if value < 0 {
+    buffer.push_str(NEGATIVE_SYLLABLE);
+    -1 * value
+  } else {
+    value
+  }
+  .try_into()
+  .unwrap();
 
   encode_unit(index, &mut buffer);
   buffer
@@ -70,6 +78,17 @@ mod tests {
     assert_eq!(
       encode(value),
       [SYLLABLES[hundreds], SYLLABLES[tens], SYLLABLES[units]].concat()
+    );
+  }
+
+  #[test]
+  fn encode_negative() {
+    let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let value = (units as i64) * -1;
+
+    assert_eq!(
+      encode(value),
+      [NEGATIVE_SYLLABLE, SYLLABLES[units]].concat()
     );
   }
 }
