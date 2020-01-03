@@ -36,13 +36,32 @@ pub fn encode(value: i64) -> String {
   buffer
 }
 
-pub fn decode(code: &str) -> Option<i64> {
-  let value: i64;
+pub fn decode(mut code: &str) -> Option<i64> {
+  let mut value: i64;
 
-  match SYLLABLES.iter().position(|&syllable| syllable == code) {
-    Some(index) => value = index as i64,
+  match SYLLABLES
+    .iter()
+    .position(|&syllable| code.starts_with(syllable))
+  {
+    Some(index) => {
+      code = &code[SYLLABLES[index].len()..];
+      value = index as i64;
+    }
     None => return None,
   };
+  if code.len() > 0 {
+    match SYLLABLES
+      .iter()
+      .position(|&syllable| code.starts_with(syllable))
+    {
+      Some(index) => {
+        value *= SYLLABLES.len() as i64;
+        value += index as i64;
+      }
+      None => return None,
+    };
+  }
+
   Some(value)
 }
 
@@ -113,5 +132,17 @@ mod tests {
   #[test]
   fn decode_unknown_syllable() {
     assert_eq!(decode("aa"), None);
+  }
+
+  #[test]
+  fn decode_many_tens() {
+    let tens = rand::thread_rng().gen_range(1, SYLLABLES.len());
+    let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let value = (tens * SYLLABLES.len() + units) as i64;
+
+    assert_eq!(
+      decode(&[SYLLABLES[tens], SYLLABLES[units]].concat()).unwrap(),
+      value
+    );
   }
 }
