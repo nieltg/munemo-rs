@@ -11,8 +11,15 @@ const SYLLABLES: [&str; 100] = [
 ];
 
 pub fn encode(value: i64) -> String {
-  let index: usize = value.try_into().unwrap();
-  String::from(SYLLABLES[index])
+  let mut index: usize = value.try_into().unwrap();
+  let mut buffer = String::new();
+
+  if index >= SYLLABLES.len() {
+    buffer.push_str(SYLLABLES[1]);
+    index -= SYLLABLES.len();
+  }
+  buffer.push_str(SYLLABLES[index]);
+  buffer
 }
 
 #[cfg(test)]
@@ -26,5 +33,14 @@ mod tests {
     let value = units as i64;
 
     assert_eq!(encode(value), SYLLABLES[units]);
+  }
+
+  #[test]
+  fn encode_one_tens() {
+    let tens = 1;
+    let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let value = (tens * SYLLABLES.len() + units) as i64;
+
+    assert_eq!(encode(value), [SYLLABLES[tens], SYLLABLES[units]].concat());
   }
 }
