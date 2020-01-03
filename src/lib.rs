@@ -38,6 +38,12 @@ pub fn encode(value: i64) -> String {
 
 pub fn decode(mut code: &str) -> Option<i64> {
   let mut value: i64 = 0;
+  let negative_factor = if code.starts_with(NEGATIVE_SYLLABLE) {
+    code = &code[NEGATIVE_SYLLABLE.len()..];
+    -1
+  } else {
+    1
+  };
 
   while code.len() > 0 {
     match SYLLABLES
@@ -52,7 +58,7 @@ pub fn decode(mut code: &str) -> Option<i64> {
       None => return None,
     };
   }
-  Some(value)
+  Some(value * negative_factor)
 }
 
 #[cfg(test)]
@@ -146,6 +152,17 @@ mod tests {
 
     assert_eq!(
       decode(&[SYLLABLES[hundreds], SYLLABLES[tens], SYLLABLES[units]].concat()).unwrap(),
+      value
+    );
+  }
+
+  #[test]
+  fn decode_negative() {
+    let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let value = (units as i64) * -1;
+
+    assert_eq!(
+      decode(&[NEGATIVE_SYLLABLE, SYLLABLES[units]].concat()).unwrap(),
       value
     );
   }
