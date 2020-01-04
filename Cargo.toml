@@ -1,8 +1,14 @@
 [package]
 name = "munemo-rs"
 version = "0.1.0"
-authors = ["Daniel <nieltansah@gmail.com>"]
+authors = ["Daniel Pintara <nieltansah@gmail.com>"]
 edition = "2018"
+license = "MIT"
+description = "Turn an integer into a more rememberable word, or vice-versa"
+repository = "https://github.com/nieltg/munemo-rs"
+
+[badges]
+travis-ci = { repository = "nieltg/munemo-rs" }
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

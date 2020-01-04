@@ -6,3 +6,16 @@ rust:
 matrix:
   allow_failures:
     - rust: nightly
+
+jobs:
+  include:
+    - stage: deploy
+      rust: stable
+      deploy:
+        provider: cargo
+        token: $CRATES_IO_API_TOKEN
+
+stages:
+  - test
+  - name: deploy
+    if: branch = master AND tag IS present
