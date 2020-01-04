@@ -26,7 +26,7 @@ Add [this crate](https://crates.io/crates/munemo-rs) under `[dependency]` sectio
 
 ### Hacking
 
-This library is built using Test-Driven Development pattern.
+This library is built using [Test-Driven Development pattern](https://doc.rust-lang.org/book/ch12-04-testing-the-librarys-functionality.html). Here are rough pattern used while developing this library:
 
 1. Write the test.
 2. Ensure the test fails using `cargo test`.
