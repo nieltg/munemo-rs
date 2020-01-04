@@ -12,6 +12,8 @@ jobs:
       deploy:
         provider: cargo
         token: $CRATES_IO_API_TOKEN
+        on:
+          all_branches: true
 
 stages:
   - test
