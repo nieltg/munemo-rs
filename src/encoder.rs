@@ -73,7 +73,7 @@ mod tests {
 
   #[test]
   fn negative() {
-    let units = rand::thread_rng().gen_range(0, SYLLABLES.len());
+    let units = rand::thread_rng().gen_range(1, SYLLABLES.len());
     let value = (units as i64) * -1;
 
     assert_eq!(
